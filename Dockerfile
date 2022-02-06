@@ -7,9 +7,10 @@ ARG HUGO_VERSION
 WORKDIR /tmp/site/
 
 ## Install hugo
-RUN wget https://github.com/gohugoio/hugo/releases/download/v${HUGO_VERSION}/hugo_${HUGO_VERSION}_Linux-64bit.tar.gz -O /tmp/hugo.tar.gz && \
-  tar -vxzf /tmp/hugo.tar.gz && \
-  mv /tmp/hugo /sbin/hugo
+RUN cd /tmp && \
+  wget https://github.com/gohugoio/hugo/releases/download/v${HUGO_VERSION}/hugo_${HUGO_VERSION}_Linux-64bit.tar.gz -O hugo.tar.gz && \
+  tar -vxzf hugo.tar.gz && \
+  mv hugo /sbin/hugo
 
 ## Build site
 COPY . .
