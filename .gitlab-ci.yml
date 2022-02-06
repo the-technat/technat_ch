@@ -1,0 +1,35 @@
+variables:
+  HUGO_VERSION: 0.92.1
+
+stages:
+  - build
+  - push
+
+image: docker:stable
+services:
+  - docker:dind
+
+before_script:
+  - docker info
+  - docker login -u gitlab-ci-token -p $CI_JOB_TOKEN $CI_REGISTRY
+
+build:
+  stage: build
+  script:
+    - docker build --build-arg HUGO_VERSION=$HUGO_VERSION -t $CI_REGISTRY_IMAGE:${CI_COMMIT_BRANCH} .
+
+push:
+  stage: push
+  script:
+    - docker push $CI_REGISTRY_IMAGE:${CI_COMMIT_BRANCH}
+
+push_latest:
+  stage: push
+  dependencies:
+    - push
+  script:
+    - docker tag $CI_REGISTRY_IMAGE:${CI_COMMIT_BRANCH} $CI_REGISTRY_IMAGE:latest
+    - docker push $CI_REGISTRY_IMAGE:latest
+  rules:
+    - if: '$CI_COMMIT_BRANCH == "master"'
+
